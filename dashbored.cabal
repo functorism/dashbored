@@ -1,0 +1,21 @@
+cabal-version:      2.4
+name:               dashbored
+version:            0.1.0.0
+
+executable dashbored
+    ghc-options:      -Wall -threaded
+    default-language: Haskell2010
+    main-is:          Main.hs
+    other-modules:    Brick.Extra.Bel CpuInfo BlockText
+    hs-source-dirs:   app
+    build-depends:    base ^>= 4.14.3.0
+                    , semialign ^>= 1.2
+                    , matrix ^>= 0.3
+                    , attoparsec ^>= 0.14
+                    , bytestring ^>= 0.11
+                    , brick ^>= 0.68
+                    , vty ^>= 5.35
+                    , time ^>= 1.12
+                    , containers ^>= 0.6
+                    , optics ^>= 0.4.1
+                    , optics-th ^>= 0.4.1
