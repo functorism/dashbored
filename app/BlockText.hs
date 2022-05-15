@@ -1,191 +1,169 @@
-{-# LANGUAGE DeriveFoldable #-}
 {-# LANGUAGE FlexibleInstances #-}
 
 module BlockText where
 
 import Data.Foldable (fold)
+import Data.Matrix (Matrix, flatten, fromList, fromLists, matrix, toLists, (<|>))
 import Data.Time (TimeOfDay (..))
 
-newtype Line a = Line (a, a, a, a) deriving (Foldable)
+topChar :: Char
+topChar = '▄'
 
-newtype Col a = Col (a, a, a) deriving (Foldable)
+bottomChar :: Char
+bottomChar = '▄'
 
-newtype Glyph a = Glyph (Line a, Line a, Line a)
+fillChar :: Char
+fillChar = '█'
 
-instance Semigroup (Line Bool) where
-  (Line (l1, l2, l3, l4)) <> (Line (r1, r2, r3, r4)) = Line (l1 || r1, l2 || r2, l3 || r3, l4 || r4)
+emptyChar :: Char
+emptyChar = ' '
 
-instance Semigroup (Glyph Bool) where
-  (Glyph (l1, l2, l3)) <> (Glyph (r1, r2, r3)) = Glyph (l1 <> r1, l2 <> r2, l3 <> r3)
+o :: Char
+o = emptyChar
 
-instance Bounded (Line Bool) where
-  minBound = Line (False, False, False, False)
-  maxBound = Line (True, True, True, True)
+f :: Char
+f = fillChar
 
-instance Bounded (Glyph Bool) where
-  minBound = Glyph (minBound, minBound, minBound)
-  maxBound = Glyph (maxBound, maxBound, maxBound)
+t :: Char
+t = topChar
 
-instance Monoid a => Monoid (Col a) where
-  mempty = Col (mempty, mempty, mempty)
+b :: Char
+b = bottomChar
 
-instance Semigroup a => Semigroup (Col a) where
-  (Col (l1, l2, l3)) <> (Col (r1, r2, r3)) =
-    Col
-      ( l1 <> r1,
-        l2 <> r2,
-        l3 <> r3
-      )
+colon :: Matrix Char
+colon = fromLists [[emptyChar], [topChar], [topChar]]
 
-glyphToCol :: (Monoid a, Semigroup a) => Glyph a -> Col a
-glyphToCol (Glyph (l1, l2, l3)) = Col (fold l1, fold l2, fold l3)
+space :: Matrix Char
+space = matrix 3 1 (const emptyChar)
 
-colToString :: Col String -> String
-colToString (Col (c1, c2, c3)) = unlines [c1, c2, c3]
+none :: Matrix Char
+none = matrix 3 0 (const emptyChar)
 
-colon :: Col String
-colon =
-  Col
-    ( " ",
-      "▀",
-      "▀"
-    )
-
-space :: Col String
-space =
-  Col
-    ( " ",
-      " ",
-      " "
-    )
-
-buildGlyph =
-  Glyph
-    ( Line ("▄", "▄", "▄", "▄"),
-      Line ("█", " ", " ", "█"),
-      Line ("█", "▄", "▄", "█")
-    )
-
-n0 :: Glyph String
+n0 :: Matrix Char
 n0 =
-  Glyph
-    ( Line ("▄", "▄", "▄", "▄"),
-      Line ("█", " ", " ", "█"),
-      Line ("█", "▄", "▄", "█")
-    )
+  fromLists
+    [ [b, b, b, b],
+      [f, o, o, f],
+      [f, b, b, f]
+    ]
 
-n1 :: Glyph String
+n1 :: Matrix Char
 n1 =
-  Glyph
-    ( Line (" ", "▄", "▄", " "),
-      Line (" ", " ", "█", " "),
-      Line (" ", " ", "█", " ")
-    )
+  fromLists
+    [ [o, b, b, o],
+      [o, o, f, o],
+      [o, o, f, o]
+    ]
 
-n2 :: Glyph String
+n2 :: Matrix Char
 n2 =
-  Glyph
-    ( Line ("▄", "▄", "▄", "▄"),
-      Line ("▄", "▄", "▄", "█"),
-      Line ("█", "▄", "▄", "▄")
-    )
+  fromLists
+    [ [b, b, b, b],
+      [b, b, b, f],
+      [f, b, b, b]
+    ]
 
-n3 :: Glyph String
+n3 :: Matrix Char
 n3 =
-  Glyph
-    ( Line ("▄", "▄", "▄", "▄"),
-      Line ("▄", "▄", "▄", "█"),
-      Line ("▄", "▄", "▄", "█")
-    )
+  fromLists
+    [ [b, b, b, b],
+      [b, b, b, f],
+      [b, b, b, f]
+    ]
 
-n4 :: Glyph String
+n4 :: Matrix Char
 n4 =
-  Glyph
-    ( Line ("▄", " ", " ", "▄"),
-      Line ("█", "▄", "▄", "█"),
-      Line (" ", " ", " ", "█")
-    )
+  fromLists
+    [ [b, o, o, b],
+      [f, b, b, f],
+      [o, o, o, f]
+    ]
 
-n5 :: Glyph String
+n5 :: Matrix Char
 n5 =
-  Glyph
-    ( Line ("▄", "▄", "▄", "▄"),
-      Line ("█", "▄", "▄", "▄"),
-      Line ("▄", "▄", "▄", "█")
-    )
+  fromLists
+    [ [b, b, b, b],
+      [f, b, b, b],
+      [b, b, b, f]
+    ]
 
-n6 :: Glyph String
+n6 :: Matrix Char
 n6 =
-  Glyph
-    ( Line ("▄", "▄", "▄", "▄"),
-      Line ("█", "▄", "▄", "▄"),
-      Line ("█", "▄", "▄", "█")
-    )
+  fromLists
+    [ [b, b, b, b],
+      [f, b, b, b],
+      [f, b, b, f]
+    ]
 
-n7 :: Glyph String
+n7 :: Matrix Char
 n7 =
-  Glyph
-    ( Line ("▄", "▄", "▄", "▄"),
-      Line (" ", " ", " ", "█"),
-      Line (" ", " ", " ", "█")
-    )
+  fromLists
+    [ [b, b, b, b],
+      [o, o, o, f],
+      [o, o, o, f]
+    ]
 
-n8 :: Glyph String
+n8 :: Matrix Char
 n8 =
-  Glyph
-    ( Line ("▄", "▄", "▄", "▄"),
-      Line ("█", "▄", "▄", "█"),
-      Line ("█", "▄", "▄", "█")
-    )
+  fromLists
+    [ [b, b, b, b],
+      [f, b, b, f],
+      [f, b, b, f]
+    ]
 
-n9 :: Glyph String
+n9 :: Matrix Char
 n9 =
-  Glyph
-    ( Line ("▄", "▄", "▄", "▄"),
-      Line ("█", "▄", "▄", "█"),
-      Line ("▄", "▄", "▄", "█")
-    )
+  fromLists
+    [ [b, b, b, b],
+      [f, b, b, f],
+      [b, b, b, f]
+    ]
 
-missing :: Glyph String
+missing :: Matrix Char
 missing =
-  Glyph
-    ( Line ("M", "I", "S", "S"),
-      Line ("M", "I", "S", "S"),
-      Line ("M", "I", "S", "S")
-    )
+  fromLists
+    [ ['M', 'I', 'S', 'S'],
+      ['C', 'H', 'A', 'R'],
+      ['N', 'U', 'L', 'L']
+    ]
 
-intToCol :: Int -> Col String
-intToCol 0 = glyphToCol n0 <> space <> glyphToCol n0 <> space
+digitToCol :: Int -> Matrix Char
+digitToCol 0 = n0
+digitToCol 1 = n1
+digitToCol 2 = n2
+digitToCol 3 = n3
+digitToCol 4 = n4
+digitToCol 5 = n5
+digitToCol 6 = n6
+digitToCol 7 = n7
+digitToCol 8 = n8
+digitToCol 9 = n9
+digitToCol _ = missing
+
+intToCol :: Int -> Matrix Char
+intToCol 0 = n0 <|> space <|> n0 <|> space
 intToCol n =
-  (if n < 10 then glyphToCol n0 <> space else mempty)
-    <> fold ((<> space) . digitToCol <$> digits n)
-
-digitToCol :: Int -> Col String
-digitToCol 0 = glyphToCol n0
-digitToCol 1 = glyphToCol n1
-digitToCol 2 = glyphToCol n2
-digitToCol 3 = glyphToCol n3
-digitToCol 4 = glyphToCol n4
-digitToCol 5 = glyphToCol n5
-digitToCol 6 = glyphToCol n6
-digitToCol 7 = glyphToCol n7
-digitToCol 8 = glyphToCol n8
-digitToCol 9 = glyphToCol n9
-digitToCol _ = glyphToCol missing
+  (if n < 10 then n0 <|> space else none)
+    <|> foldr (<|>) none ((<|> space) . digitToCol <$> digits n)
 
 digits :: Integral a => a -> [a]
 digits m =
   let go n ns = if n > 0 then go (div n 10) (mod n 10 : ns) else ns
    in go m []
 
+matToString :: Matrix Char -> String
+matToString = foldMap (<> "\n") . toLists
+
 todToBlockText :: TimeOfDay -> String
 todToBlockText tod =
-  colToString $
+  matToString $
     intToCol (todHour tod)
-      <> colon
-      <> space
-      <> intToCol (todMin tod)
-      <> ticker (show (truncate $ todSec tod :: Int))
+      <|> colon
+      <|> space
+      <|> intToCol (todMin tod)
+      <|> ticker (show (truncate $ todSec tod :: Int))
 
-ticker :: String -> Col String
-ticker t = Col (t, "", "")
+ticker :: String -> Matrix Char
+ticker [c1, c2] = fromLists [[c1, c2], [' ', ' '], [' ', ' ']]
+ticker [c1] = fromLists [['0', c1], [' ', ' '], [' ', ' ']]
+ticker _ = none
