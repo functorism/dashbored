@@ -1,43 +1,28 @@
-{-# LANGUAGE FlexibleInstances #-}
-
 module BlockText where
 
-import Data.Foldable (fold)
-import Data.Matrix (Matrix, flatten, fromList, fromLists, matrix, toLists, (<|>))
+import Data.Matrix (Matrix, fromLists, matrix, toLists, (<|>))
 import Data.Time (TimeOfDay (..))
 
-topChar :: Char
-topChar = '▄'
-
-bottomChar :: Char
-bottomChar = '▄'
-
-fillChar :: Char
-fillChar = '█'
-
-emptyChar :: Char
-emptyChar = ' '
-
-o :: Char
-o = emptyChar
-
-f :: Char
-f = fillChar
-
 t :: Char
-t = topChar
+t = '▄'
 
 b :: Char
-b = bottomChar
+b = '▄'
+
+f :: Char
+f = '█'
+
+o :: Char
+o = ' '
 
 colon :: Matrix Char
-colon = fromLists [[emptyChar], [topChar], [topChar]]
+colon = fromLists [[o], [t], [t]]
 
 space :: Matrix Char
-space = matrix 3 1 (const emptyChar)
+space = matrix 3 1 (const o)
 
 none :: Matrix Char
-none = matrix 3 0 (const emptyChar)
+none = matrix 3 0 (const o)
 
 n0 :: Matrix Char
 n0 =
@@ -143,8 +128,7 @@ digitToCol _ = missing
 intToCol :: Int -> Matrix Char
 intToCol 0 = n0 <|> space <|> n0 <|> space
 intToCol n =
-  (if n < 10 then n0 <|> space else none)
-    <|> foldr (<|>) none ((<|> space) . digitToCol <$> digits n)
+  foldl (<|>) (if n < 10 then n0 <|> space else none) ((<|> space) . digitToCol <$> digits n)
 
 digits :: Integral a => a -> [a]
 digits m =

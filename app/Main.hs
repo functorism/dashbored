@@ -49,11 +49,8 @@ fillVertical c = Widget Greedy Fixed $ do
 view :: View DashState DashName
 view DashState {tod, cpuLoad} =
   center $
-    fillVertical '/'
+    str (todToBlockText tod)
       <=> fillVertical ' '
-      <=> str (todToBlockText tod)
-      <=> fillVertical ' '
-      <=> fillVertical '/'
       <=> fillVertical ' '
       <=> vBox (viewCpuLoad . cpuLoadAvg <$> cpuLoad)
 
