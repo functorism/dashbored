@@ -1,14 +1,7 @@
-{-# LANGUAGE DataKinds #-}
 {-# LANGUAGE DeriveFoldable #-}
 {-# LANGUAGE DeriveFunctor #-}
-{-# LANGUAGE DeriveGeneric #-}
-{-# LANGUAGE DuplicateRecordFields #-}
-{-# LANGUAGE FlexibleInstances #-}
-{-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE NamedFieldPuns #-}
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE TypeFamilies #-}
-{-# LANGUAGE UndecidableInstances #-}
 
 module CpuInfo where
 
@@ -20,7 +13,6 @@ import Data.ByteString as BS (ByteString, isPrefixOf, readFile)
 import qualified Data.ByteString.Char8 as BS
 import Data.Either (rights)
 import Data.Maybe (fromMaybe)
-import GHC.Generics (Generic)
 
 readProcStat :: IO BS.ByteString
 readProcStat = BS.readFile "/proc/stat"
@@ -37,7 +29,7 @@ data CpuInfo' a = CpuInfo
     guest :: a,
     guest_nice :: a
   }
-  deriving (Eq, Ord, Show, Functor, Foldable, Generic)
+  deriving (Eq, Ord, Show, Functor, Foldable)
 
 type CpuInfo = CpuInfo' Int
 
