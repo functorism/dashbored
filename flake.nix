@@ -39,6 +39,9 @@
         defaultPackage = flake.packages."dashbored:exe:dashbored";
 
         packages = {
+
+          dashbored = self.defaultPackage;
+
           snap = pkgs.snapTools.makeSnap {
              meta = {
                name = "dashbored";
@@ -50,15 +53,6 @@
              };
           };
 
-          foo = pkgs.stdenv.mkDerivation {
-           name = "foo"; 
-           src = ./.;
-           unpackPhase = '''';
-           installPhase = ''
-             mkdir $out
-             echo foo > $out/foo
-           '';
-          };
         };
 
       });

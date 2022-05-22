@@ -49,9 +49,6 @@ parseNetDevs = fromAscList . rights . (parseOnly netLine <$>) . drop 2 . BS.line
 rate :: Fractional d => d -> Int -> Int -> d
 rate dx prev next = fromIntegral (next - prev) / dx
 
-rate' :: Fractional d => d -> d -> d -> d
-rate' dx prev next = (next - prev) / dx
-
 rates :: Fractional d => d -> Map Interface Int -> Map Interface Int -> Map Interface d
 rates = padZipWith . ((fromMaybe 0 .) .) . liftA2 . rate
 
