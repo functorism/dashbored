@@ -17,7 +17,7 @@ jobs:
           substituters = https://hydra.iohk.io https://cache.nixos.org/
     - run: nix build .#foo
     - run: ls
-    - run: cp result release
+    - run: cp -r result release
     - uses: softprops/action-gh-release@v1
       if: startsWith(github.ref, 'refs/tags/')
       with: { files: release }
