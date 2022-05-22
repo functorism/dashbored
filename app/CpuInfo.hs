@@ -1,5 +1,4 @@
 {-# LANGUAGE DeriveFoldable #-}
-{-# LANGUAGE DeriveFunctor #-}
 {-# LANGUAGE NamedFieldPuns #-}
 {-# LANGUAGE OverloadedStrings #-}
 
@@ -9,13 +8,10 @@ import Control.Applicative (Applicative (liftA2))
 import Data.Align (Semialign, padZipWith)
 import Data.Attoparsec.ByteString (Parser, parseOnly, string)
 import Data.Attoparsec.ByteString.Char8 (decimal, space)
-import Data.ByteString as BS (ByteString, isPrefixOf, readFile)
-import qualified Data.ByteString.Char8 as BS
+import Data.ByteString as BS (ByteString)
 import Data.Either (rights)
 import Data.Maybe (fromMaybe)
-
-readProcStat :: IO BS.ByteString
-readProcStat = BS.readFile "/proc/stat"
+import qualified Data.ByteString.Char8 as BS
 
 data CpuInfo' a = CpuInfo
   { user :: a,
@@ -29,7 +25,7 @@ data CpuInfo' a = CpuInfo
     guest :: a,
     guest_nice :: a
   }
-  deriving (Eq, Ord, Show, Functor, Foldable)
+  deriving (Eq, Ord, Show, Foldable)
 
 type CpuInfo = CpuInfo' Int
 
@@ -68,6 +64,9 @@ cpuLoadAvg (prev, next) = fromIntegral utilized / fromIntegral totalDelta
     idleDelta = nextIdle - prevIdle
     (prevTotal, prevIdle) = cpuLoadRatio prev
     (nextTotal, nextIdle) = cpuLoadRatio next
+
+readProcStat :: IO BS.ByteString
+readProcStat = BS.readFile "/proc/stat"
 
 cpuLine :: Parser CpuInfo
 cpuLine =

@@ -107,9 +107,9 @@ n9 =
 missing :: Matrix Char
 missing =
   fromLists
-    [ ['M', 'I', 'S', 'S'],
-      ['C', 'H', 'A', 'R'],
-      ['N', 'U', 'L', 'L']
+    [ ['?', '?', '?', '?'],
+      ['?', '?', '?', '?'],
+      ['?', '?', '?', '?']
     ]
 
 digitToCol :: Int -> Matrix Char

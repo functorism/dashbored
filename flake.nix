@@ -1,6 +1,15 @@
-{
+let
 
-  description = "Flake for Dashbored";
+  name = "dashbored";
+  description = "";
+  summary = "";
+
+  ghcVersion = "ghc8107";
+  supportedSystems = [ "x86_64-linux" "aarch64-linux" ];
+
+in {
+
+  inherit description;
 
   inputs.haskellNix.url = "github:input-output-hk/haskell.nix";
   inputs.nixpkgs.follows = "haskellNix/nixpkgs-2111";
@@ -8,7 +17,7 @@
 
   outputs = { self, nixpkgs, flake-utils, haskellNix }:
 
-    flake-utils.lib.eachSystem [ "x86_64-linux" "aarch64-linux" ] (system:
+    flake-utils.lib.eachSystem supportedSystems (system:
 
       let
 
@@ -17,7 +26,7 @@
           (final: prev: {
             dashbored = final.haskell-nix.project' {
               src = ./.;
-              compiler-nix-name = "ghc8107";
+              compiler-nix-name = ghcVersion;
               shell.tools = {
                 cabal = { };
                 hlint = { };
@@ -36,7 +45,20 @@
         flake = pkgs.dashbored.flake { };
 
       in flake // {
+
         defaultPackage = flake.packages."dashbored:exe:dashbored";
+
+        packages = {
+          snap = pkgs.snapTools.makeSnap {
+             meta = {
+               inherit name description summary;
+               architectures = [ "amd64" "aarch64" ];
+               confinement = "strict";
+               apps.dashbored.command = "${self.defaultPackage."${system}"}/bin/dashbored";
+             };
+          };
+        };
+
       });
 
 }
