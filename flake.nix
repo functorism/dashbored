@@ -49,6 +49,16 @@
                apps.dashbored.command = "${self.defaultPackage."${system}"}/bin/dashbored";
              };
           };
+
+          foo = pkgs.stdenv.mkDerivation {
+           name = "foo"; 
+           src = ./.;
+           unpackPhase = '''';
+           installPhase = ''
+             mkdir $out
+             echo foo > $out/foo
+           '';
+          };
         };
 
       });
